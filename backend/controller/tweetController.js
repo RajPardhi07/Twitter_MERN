@@ -118,3 +118,52 @@ export const getFollowingTweets = async (req, res) => {
         console.log(error);
     }
 }
+
+
+// export const UserTweetController = async (req, res) => {
+//     try {
+//         const {id} = req.params;
+
+//         const myTweet = await tweetModel.find(id);
+//         if(!myTweet){
+//             return res.status(404).send({
+//                 message:"Tweet Not found"
+//             })
+//         }
+//         res.status(200).json({
+//             message:"All User Tweet",
+//             success:true,
+//             myTweet
+//         })
+
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
+
+
+export const UserTweetController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Fetch tweets where the userId matches the provided id
+        const myTweets = await tweetModel.find({ userId: id });
+        if (!myTweets || myTweets.length === 0) {
+            return res.status(404).json({
+                message: "No tweets found for this user",
+                success: false,
+            });
+        }
+        res.status(200).json({
+            message: "User's tweets fetched successfully",
+            success: true,
+            myTweets,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Error while fetching user's tweets",
+        });
+    }
+}

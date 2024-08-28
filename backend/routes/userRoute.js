@@ -1,5 +1,5 @@
 import express from 'express'
-import { bookmarks, followController, getMyProfile, getOtherUsers, loginController, logoutController, registerController, unfollowController } from '../controller/userController.js';
+import { bookmarks, editController, followController, getMyProfile, getOtherUsers, getSingleUser, loginController, logoutController, registerController, unfollowController } from '../controller/userController.js';
 import isAuthenticated from '../config/auth.js';
 
 const router = express.Router();
@@ -16,6 +16,10 @@ router.post("/login", loginController);
 
 // http://localhost:8080/api/user/logout
 router.get("/logout", logoutController);
+
+router.post("/edit/:id", editController);
+
+router.get('/singleuser/:id', getSingleUser);
 
 
 router.put('/bookmark/:id', isAuthenticated, bookmarks);

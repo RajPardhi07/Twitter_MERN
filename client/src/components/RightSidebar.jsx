@@ -1,11 +1,47 @@
+import axios, { all } from "axios";
+import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Link } from "react-router-dom";
+import { USER_API_END_POINT } from "../utils/constant";
+import { useSelector } from "react-redux";
 // import Avatar from 'react-avatar';
 
 
-const RightSidebar = ( otherUsers ) => {
+const RightSidebar = () => {
+
+  const { user } = useSelector(store => store.user);
+  const [allusers, setAllusers] = useState();
+  const [visibleUsers ,setVisibleUsers] = useState(5);
+
+  // console.log("allusers",allusers)
+  // console.log(user._id)
+
+
+  useEffect(() => {
+
+    const fetchOtherUsers = async () => {
+
+      try {
+        const res = await axios.get(`${USER_API_END_POINT}/otheruser/${user._id}`, {
+          withCredentials: true
+        });
+        // console.log("lol", res.data.otherusers);
+        setAllusers(res.data.otherusers)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchOtherUsers();
+  }, [])
+
+  const handleSeeMore = () => {
+    setVisibleUsers((prevVisible) => prevVisible + 5);
+  }
+
+
   return (
-    
+
 
 
     <div className="fixed top-0 w-full left-[74%] p-5 h-[100vh] bg-white">
@@ -20,90 +56,38 @@ const RightSidebar = ( otherUsers ) => {
 
       </div>
 
-      <div className="w-[20vw] h-[40vh] p-1 bg-gray-200 rounded-lg">
+      <div className="w-[20vw] py-3 p-1 bg-gray-200 rounded-lg">
         <p className="text-xl font-semibold ml-1 mt-1">You Might Like</p>
 
         {
-        otherUsers?.map((user) => (
-          <div key={user?._id} className="flex items-center mt-5 justify-between">
-            <div className="flex items-center">
-              <img className="w-10 h-10 object-cover rounded-full" src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg" alt="" />
-              <div>
-                <h5 className="font-bold">{user?.name}</h5>
-                <p className="text-slate-500">{user?.username}</p>
+          allusers?.slice(0, visibleUsers)?.map((user) => (
+            <div key={user?._id} className="flex items-center p-1 mt-5 justify-between">
+              <div className="flex items-center">
+                <img className="w-10 h-10 object-cover rounded-full" src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg" alt="" />
+                <div>
+                  <h5 className="font-bold">{user?.name}</h5>
+                  <p className="text-slate-500">{user?.username}</p>
+                </div>
               </div>
-            </div>
-            <Link to={`/profile/${user?._id}`}>
+              <Link to={`/profile/${user?._id}`}>
 
-              <button className="bg-black text-slate-200 px-3 py-1 rounded-full">Profile</button>
-            </Link>
-          </div>
-        ))}
+                <button className="bg-black text-slate-200 px-3 py-1 rounded-full">Profile</button>
+              </Link>
+            </div>
+          ))
+        }
 
-        {/* <div className="flex items-center mt-5 justify-between">
-          <div className="flex items-center">
-            <img className="w-10 h-10 object-cover object-center rounded-full" src="https://static1.moviewebimages.com/wordpress/wp-content/uploads/2022/05/Top-Gun-Maverick-TC.jpg" alt="" />
-            <div>
-              <h5 className="font-bold">Tom Cruise</h5>
-              <p className="text-slate-500">@tomcruise</p>
-            </div>
-          </div>
-          <button className="bg-black text-slate-200 px-3 py-1 rounded-full">FOLLOW</button>
-        </div>
-        <div className="flex items-center mt-5 justify-between">
-          <div className="flex items-center">
-            <img className="w-10 h-10 object-cover object-top rounded-full" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Homi_Jehangir_Bhabha_1960s.jpg/330px-Homi_Jehangir_Bhabha_1960s.jpg" alt="" />
-            <div>
-              <h5 className="font-bold">Homi Bhabha</h5>
-              <p className="text-slate-500">@homibhabha</p>
-            </div>
-          </div>
-          <button className="bg-black text-slate-200 px-3 py-1 rounded-full">FOLLOW</button>
-        </div> */}
+        {allusers?.length > visibleUsers && (
+          <button className="bg-gray-800 text-white px-3 py-1 rounded-full mt-3"
+           onClick={handleSeeMore}>
+            See More
+          </button>
+        )}
+
+
 
       </div>
 
-      <div className="w-[20vw] p-1 h-[45vh] bg-gray-200 mt-5 rounded-lg">
-        <p className="text-xl font-semibold ml-1 mt-2">What Happening</p>
-
-
-        <div className="flex items-center p-1 mt-5 justify-between leading-5">
-          <div>
-            <p>Sport · Trending</p>
-            <h5>#TeamIndia</h5>
-            <p>46.7k posts</p>
-          </div>
-          <div>
-            <i className="ri-more-fill"></i>
-
-          </div>
-        </div>
-
-        <div className="flex items-center p-1 mt-5 justify-between leading-5">
-          <div>
-            <p>Event · Trending</p>
-            <h5>#Neerajchopra</h5>
-            <p>876.7k posts</p>
-          </div>
-          <div>
-            <i className="ri-more-fill"></i>
-
-          </div>
-        </div>
-        <div className="flex items-center p-1 mt-5 justify-between leading-5">
-          <div>
-            <p>Car · Trending</p>
-            <h5>#Ferrari</h5>
-            <p>1.1m posts</p>
-          </div>
-          <div>
-            <i className="ri-more-fill"></i>
-
-          </div>
-        </div>
-
-
-      </div>
     </div>
   )
 }

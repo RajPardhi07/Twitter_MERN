@@ -5,7 +5,7 @@ import tweetModel from "../model/tweetModel.js";
 
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password, username } = req.body;
+        const { name, email, password, username, location, work } = req.body;
 
         const user = await userModel.findOne({ email })
         if (user) {
@@ -21,7 +21,9 @@ export const registerController = async (req, res) => {
             name,
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            work,
+            location
         })
         res.status(201).json({
             success: true,
@@ -81,6 +83,46 @@ export const loginController = async (req, res) => {
     }
 }
 
+
+export const getSingleUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const user = await userModel.findById(id)
+        res.status(200).json({
+            success:true,
+            message:"User get successfully",
+            user
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "Error while get user"
+        })
+    }
+}
+
+export const editController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const data = req.body;
+
+        const editUser = await userModel.findByIdAndUpdate(id, data, { new: true }).select("-password")
+        res.status(200).json({
+            success: true,
+            message: "User Updated Successfully",
+            editUser
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "Error while Edit user"
+        })
+    }
+}
 
 
 export const logoutController = (req, res) => {
@@ -189,22 +231,22 @@ export const getOtherUsers = async (req, res) => {
 export const followController = async (req, res) => {
     try {
         const loggedInUserId = req.body.id;
-        const  userId = req.params.id;
+        const userId = req.params.id;
 
         const loggedInUser = await userModel.findById(loggedInUserId);
         const user = await userModel.findById(userId);
 
-        if(!user.followers.includes(loggedInUserId)){
-            await user.updateOne({$push:{followers:loggedInUserId}});
-            await loggedInUser.updateOne({$push:{following:userId}});
-        }else{
+        if (!user.followers.includes(loggedInUserId)) {
+            await user.updateOne({ $push: { followers: loggedInUserId } });
+            await loggedInUser.updateOne({ $push: { following: userId } });
+        } else {
             return res.status(400).send({
-                message:`User already followed to ${user.name}`
+                message: `User already followed to ${user.name}`
             })
         }
         return res.status(200).json({
-            message:`${loggedInUser.name} just follow to ${user.name}`,
-            success:true
+            message: `${loggedInUser.name} just follow to ${user.name}`,
+            success: true
         })
     } catch (error) {
         console.log(error)
@@ -215,24 +257,24 @@ export const followController = async (req, res) => {
 export const unfollowController = async (req, res) => {
     try {
         const loggedInUserId = req.body.id;
-        const  userId = req.params.id;
+        const userId = req.params.id;
 
         const loggedInUser = await userModel.findById(loggedInUserId);
         const user = await userModel.findById(userId);
 
-        if(loggedInUser.following.includes(userId)){
-            await user.updateOne({$pull:{followers:loggedInUserId}});
-            await loggedInUser.updateOne({$pull:{following:userId}});
-        }else{
+        if (loggedInUser.following.includes(userId)) {
+            await user.updateOne({ $pull: { followers: loggedInUserId } });
+            await loggedInUser.updateOne({ $pull: { following: userId } });
+        } else {
             return res.status(400).send({
-                message:`User not follow yet`
+                message: `User not follow yet`
             })
         }
         return res.status(200).json({
-            message:`${loggedInUser.name} just unfollow to ${user.name}`,
-            success:true
+            message: `${loggedInUser.name} just unfollow to ${user.name}`,
+            success: true
         })
-        
+
     } catch (error) {
         console.log(error)
         res.status(500).send({

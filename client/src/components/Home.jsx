@@ -9,7 +9,9 @@ import useGetMyTweets from "../hooks/useGetMyTweets"
 
 const Home = () => {
 
-    const { user, otherUsers } = useSelector(store => store.user);
+    const { user , otherUsers} = useSelector(store => store.user);
+
+    console.log("rajj",)
 
     const navigate = useNavigate();
 

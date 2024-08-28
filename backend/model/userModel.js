@@ -27,6 +27,21 @@ following:{
     type:Array,
     default:[]
 },
+work:{
+    type:String,
+
+},
+location:{
+    type:String,
+},
+myTweet:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Tweet",
+},
+image: {
+    type: String,
+   
+},
 bookmarks:{
     type:Array,
     default:[]

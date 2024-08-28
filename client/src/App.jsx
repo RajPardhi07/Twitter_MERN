@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom"
 import Profile from "./components/Profile"
 import Login from "./components/Login"
 import Register from "./components/Register"
+import Edit from "./components/Edit"
 // import LeftSidebar from "./components/LeftSidebar"
 // import RightSidebar from "./components/RightSidebar"
 
@@ -17,7 +18,8 @@ const App = () => {
       <Routes>
 
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/edit/:id" element={<Edit />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
