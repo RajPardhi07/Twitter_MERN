@@ -144,13 +144,16 @@ const Profile = () => {
                         <div className="flex px-5 justify-between">
                             <div>
                                 <h2 className="text-4xl font-bold">{profile?.name}</h2>
-                                <h4 className="text-xl text-slate-700">{profile?.username}</h4>
-                                <div className="flex items-center gap-2">
+                                <h4 className="text-xl text-slate-700 mt-1">{profile?.username}</h4>
+                                <div className="flex items-center gap-2 mt-1">
                                     <MdOutlineWorkOutline size="20px" />
 
 
                                     <p className="text-xl">{profile?.work}</p>
+
+                                    
                                 </div>
+                                    <p className="text-slate-600 mt-1">{profile?.bio}</p>
                             </div>
 
                             <div className="-mt-16">
@@ -158,7 +161,7 @@ const Profile = () => {
                                     src={`http://localhost:8080/Images/` + image} alt=""
                                     onClick={() => fileRef.current.click()} />
                                 <input ref={fileRef} type="file" hidden onChange={e => setFile(e.target.files[0])} />
-                                <button className="bg-blue-500" onClick={handleUpload}>Upload</button>
+                                <button className="border rounded-full px-3 py-1 ml-10 mt-1 hover:bg-slate-200" onClick={handleUpload}>Upload</button>
 
                             </div>
 

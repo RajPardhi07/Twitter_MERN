@@ -5,7 +5,7 @@ import tweetModel from "../model/tweetModel.js";
 
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password, username, location, work } = req.body;
+        const { name, email, password, username, location, work,bio } = req.body;
 
         const user = await userModel.findOne({ email })
         if (user) {
@@ -23,7 +23,8 @@ export const registerController = async (req, res) => {
             email,
             password: hashedPassword,
             work,
-            location
+            location,
+            bio
         })
         res.status(201).json({
             success: true,
@@ -139,6 +140,7 @@ export const bookmarks = async (req, res) => {
         const loggedInUserId = req.body.id;
         const tweetId = req.params.id;
 
+        const tweet = await tweetModel.findById(tweetId);
         const user = await userModel.findById(loggedInUserId);
         if (user.bookmarks.includes(tweetId)) {
             await userModel.findByIdAndUpdate(loggedInUserId, { $pull: { bookmarks: tweetId } });
@@ -148,7 +150,8 @@ export const bookmarks = async (req, res) => {
         } else {
             await userModel.findByIdAndUpdate(loggedInUserId, { $push: { bookmarks: tweetId } });
             return res.status(200).json({
-                message: "Saved post"
+                message: "Saved post",
+                tweet
             })
         }
     } catch (error) {
@@ -160,6 +163,34 @@ export const bookmarks = async (req, res) => {
     }
 }
 
+
+export const getMyBookmark = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await userModel.findById(id).select('bookmarks')
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"User not found"
+            })
+        }
+
+        const bookmarks = user.bookmarks ;
+
+        res.status(200).json({
+            message:"Get All Tweets",
+            success:true,
+            bookmarks,
+            
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "Error while Get Bookmark tweet"
+        })
+    }
+}
 
 
 export const getMyProfile = async (req, res) => {

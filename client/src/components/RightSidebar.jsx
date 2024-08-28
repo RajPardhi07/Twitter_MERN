@@ -11,7 +11,7 @@ const RightSidebar = () => {
 
   const { user } = useSelector(store => store.user);
   const [allusers, setAllusers] = useState();
-  const [visibleUsers ,setVisibleUsers] = useState(5);
+  const [visibleUsers, setVisibleUsers] = useState(5);
 
   // console.log("allusers",allusers)
   // console.log(user._id)
@@ -26,7 +26,7 @@ const RightSidebar = () => {
           withCredentials: true
         });
         // console.log("lol", res.data.otherusers);
-        setAllusers(res.data.otherusers)
+        setAllusers(res?.data?.otherusers)
       } catch (error) {
         console.log(error)
       }
@@ -35,20 +35,20 @@ const RightSidebar = () => {
     fetchOtherUsers();
   }, [])
 
-  const handleSeeMore = () => {
-    setVisibleUsers((prevVisible) => prevVisible + 5);
-  }
+  // const handleSeeMore = () => {
+  //   setVisibleUsers((prevVisible) => prevVisible + 5);
+  // }
 
 
   return (
 
 
 
-    <div className="fixed top-0 w-full left-[74%] p-5 h-[100vh] bg-white">
+    <div className="fixed top-0 w-full left-[74%] p-5  bg-white">
       <div className="w-full h-[9vh]">
         {/* <input className="w-[18vw] h-[6vh] bg-slate-100 rounded-full pl-3" type="text" placeholder="Search" /> */}
 
-        <div className="p-2 bg-gray-200 rounded-full w-[20vw] flex items-center">
+        <div className="p-2 bg-gray-100 rounded-full w-[20vw] flex items-center">
           <CiSearch size="20px" className="text-gray-500" />
 
           <input type="text" placeholder="Search" className="bg-transparent px-2 outline-none" />
@@ -56,7 +56,10 @@ const RightSidebar = () => {
 
       </div>
 
-      <div className="w-[20vw] py-3 p-1 bg-gray-200 rounded-lg">
+
+
+
+      <div className="w-[20vw]  py-3 p-1 bg-gray-100 rounded-lg">
         <p className="text-xl font-semibold ml-1 mt-1">You Might Like</p>
 
         {
@@ -77,16 +80,21 @@ const RightSidebar = () => {
           ))
         }
 
-        {allusers?.length > visibleUsers && (
+
+        <Link to='/allusers'>
+
           <button className="bg-gray-800 text-white px-3 py-1 rounded-full mt-3"
-           onClick={handleSeeMore}>
+          >
             See More
           </button>
-        )}
+        </Link>
+
 
 
 
       </div>
+
+
 
     </div>
   )

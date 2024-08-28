@@ -10,6 +10,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [work, setWork] = useState("");
     const [location, setLocation] = useState("");
+    
 
     const navigate = useNavigate();
 

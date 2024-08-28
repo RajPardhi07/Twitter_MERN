@@ -4,6 +4,8 @@ import Profile from "./components/Profile"
 import Login from "./components/Login"
 import Register from "./components/Register"
 import Edit from "./components/Edit"
+import AllusersPage from "./components/AllusersPage"
+import Bookmark from "./components/Bookmark"
 // import LeftSidebar from "./components/LeftSidebar"
 // import RightSidebar from "./components/RightSidebar"
 
@@ -20,6 +22,8 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/edit/:id" element={<Edit />} />
+        <Route path="/allusers" element={<AllusersPage />} />
+        <Route path="/bookmarks/:is" element={<Bookmark />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

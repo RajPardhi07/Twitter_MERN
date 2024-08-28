@@ -42,6 +42,10 @@ image: {
     type: String,
    
 },
+bio:{
+    type:String,
+    default:"..."
+},
 bookmarks:{
     type:Array,
     default:[]

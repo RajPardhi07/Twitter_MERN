@@ -14,7 +14,8 @@ const Edit = () => {
         name: '',
         username: '',
         work: '',
-        location: ''
+        location: '',
+        bio:''
     });
 
     useEffect(() => {
@@ -27,6 +28,7 @@ const Edit = () => {
                     username: res?.data?.user?.username,
                     work: res?.data?.user?.work,
                     location: res?.data?.user?.location,
+                    bio: res?.data?.user?.bio,
                 })
             } catch (error) {
                 console.log(error)
@@ -82,6 +84,10 @@ const Edit = () => {
                         onChange={e => setValue({ ...value, location: e.target.value })}
 
                         type="text" id='location' name="location" placeholder="Location" />
+                    <input value={value?.bio} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                        onChange={e => setValue({ ...value, bio: e.target.value })}
+
+                        type="text" id='bio' name="bio" placeholder="Bio" />
                     <button type="submit" className='w-[25vw] h-[7vh] text-white font-semibold bg-black rounded-full border'>Update</button>
 
                     <Link to={`/profile/${id}`}>
