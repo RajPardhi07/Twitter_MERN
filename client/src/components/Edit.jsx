@@ -15,7 +15,7 @@ const Edit = () => {
         username: '',
         work: '',
         location: '',
-        bio:''
+        bio: ''
     });
 
     useEffect(() => {
@@ -54,49 +54,50 @@ const Edit = () => {
 
 
     return (
-        <div className='w-full h-screen flex' >
-            <div className='w-[50%] h-full '>
-                <h1 className='text-[9vh] text-center font-bold'>Edit User Now</h1>
+        <div style={{ backgroundImage: `url(https://images.unsplash.com/photo-1472289065668-ce650ac443d2?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)` }}
 
-                <img className='mt-3' src="https://logolook.net/wp-content/uploads/2021/06/Twitter-Log%D0%BE.png" alt="" />
+            className='w-full h-screen p-10 bg-top bg-cover' >
+            {/* <h1 className='text-[9vh] text-center font-bold'>Edit User Now</h1> */}
 
-            </div>
+            {/* <img className='mt-3' src="https://logolook.net/wp-content/uploads/2021/06/Twitter-Log%D0%BE.png" alt="" /> */}
+            {/* <img className='mt-3' src="https://images.unsplash.com/photo-1651081042986-c7646d967dcb?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" /> */}
 
-            <div className='w-[50%] h-full flex items-center justify-center bg-white'>
-                <form onSubmit={handleSubmit} className='formregister h-[73vh] w-[29vw] bg-gray-300 rounded-lg py-2 flex flex-col items-center justify-around '>
-                    <h3 className='text-2xl'>Update User</h3>
-                    <input value={value?.name} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
-                        onChange={e => setValue({ ...value, name: e.target.value })}
-                        type="text" id='name'
-                        name="name" placeholder="Name" />
-                    
-                    <input value={value?.username} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
-                        onChange={e => setValue({ ...value, username: e.target.value })}
-                        type="text" id='username'
-                        name="username" placeholder="Username" />
-                  
-
-                    <input value={value?.work} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
-                        onChange={e => setValue({ ...value, work: e.target.value })}
-
-                        type="text" id='work' name="work" placeholder="Work" />
-                    <input value={value?.location} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
-                        onChange={e => setValue({ ...value, location: e.target.value })}
-
-                        type="text" id='location' name="location" placeholder="Location" />
-                    <input value={value?.bio} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
-                        onChange={e => setValue({ ...value, bio: e.target.value })}
-
-                        type="text" id='bio' name="bio" placeholder="Bio" />
-                    <button type="submit" className='w-[25vw] h-[7vh] text-white font-semibold bg-black rounded-full border'>Update</button>
-
-                    <Link to={`/profile/${id}`}>
-                        <button className='w-[22vw] h-[7vh] pl-3 rounded-full border text-white font-semibold bg-black'>Go Back</button>
-                    </Link>
+            <h1 className="text-8xl ml-10 font-bold">Edit profile</h1>
 
 
-                </form>
-            </div>
+            <form onSubmit={handleSubmit} className='formregister absolute left-[60%] top-[10%] h-[73vh] w-[29vw] bg-gray-300  rounded-lg py-2 flex flex-col items-center justify-around '>
+                <h3 className='text-2xl'>Update User</h3>
+                <input value={value?.name} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                    onChange={e => setValue({ ...value, name: e.target.value })}
+                    type="text" id='name'
+                    name="name" placeholder="Name" />
+
+                <input value={value?.username} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                    onChange={e => setValue({ ...value, username: e.target.value })}
+                    type="text" id='username'
+                    name="username" placeholder="Username" />
+
+
+                <input value={value?.work} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                    onChange={e => setValue({ ...value, work: e.target.value })}
+
+                    type="text" id='work' name="work" placeholder="Work" />
+                <input value={value?.location} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                    onChange={e => setValue({ ...value, location: e.target.value })}
+
+                    type="text" id='location' name="location" placeholder="Location" />
+                <input value={value?.bio} className='w-[25vw] h-[7vh] pl-3 rounded-full border'
+                    onChange={e => setValue({ ...value, bio: e.target.value })}
+
+                    type="text" id='bio' name="bio" placeholder="Bio" />
+                <button type="submit" className='w-[25vw] h-[7vh] text-white font-semibold bg-black rounded-full border'>Update</button>
+
+                <Link to={`/profile/${id}`}>
+                    <button className='w-[22vw] h-[7vh] pl-3 rounded-full border text-white font-semibold bg-black'>Go Back</button>
+                </Link>
+
+
+            </form>
         </div>
     )
 }

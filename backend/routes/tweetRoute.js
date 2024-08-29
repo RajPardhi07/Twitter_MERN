@@ -2,7 +2,7 @@
 
 
 import express from 'express'
-import { createTweetController, deleteTweetController, getAllTweets, getFollowingTweets, likeOrDislike, UserTweetController } from '../controller/tweetController.js';
+import { addCommentController, createTweetController, deleteTweetController, getAllTweets, getCommentsController, getFollowingTweets, likeOrDislike, UserTweetController } from '../controller/tweetController.js';
 import isAuthenticated from '../config/auth.js';
 
 const router = express.Router();
@@ -18,6 +18,10 @@ router.delete('/deleteTweet/:id', isAuthenticated, deleteTweetController);
 
 // http://localhost:8080/api/tweet/likeOrDislike/:id
 router.put('/likeOrDislike/:id', isAuthenticated, likeOrDislike);
+
+router.post('/tweets/:tweetId/comments', addCommentController);
+
+router.get('/tweets/:tweetId/comments', getCommentsController);
 
 
 router.get('/alltweets/:id', isAuthenticated, getAllTweets);

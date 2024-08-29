@@ -167,3 +167,133 @@ export const UserTweetController = async (req, res) => {
         });
     }
 }
+
+
+// export const addCommentController = async (req, res) => {
+
+//     try {
+//         const { tweetId, userId, text } = req.body;
+
+//         if (!tweetId || !userId || !text) {
+//             return res.status(400).json({
+//                 message: "All fields are required",
+//                 success: false
+//             });
+//         }
+
+//         const tweet = await tweetModel.findById(tweetId);
+//         if (!tweet) {
+//             return res.status(404).json({
+//                 message: "Tweet not found",
+//                 success: false
+//             });
+//         }
+
+//         const newComment = {
+//             text,
+//             userId,
+//             created: new Date(),
+//         };
+
+//         tweet.comments.push(newComment);
+//         await tweet.save();
+
+//         return res.status(201).json({
+//             message: "Comment added successfully",
+//             success: true,
+//             tweet
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({
+//             success: false,
+//             message: "Error while adding comment"
+//         });
+//     }
+// };
+
+
+
+
+export const addCommentController = async (req, res) => {
+    try {
+        const { tweetId, userId, text } = req.body;
+
+        if (!tweetId || !userId || !text) {
+            return res.status(400).send({
+                success: false,
+                message: "All fields are required"
+            })
+        }
+
+        const user = await userModel.findById(userId).select("name username")
+        if (!user) {
+            return res.status(404).send({
+                success: false,
+                message: "User Not Found"
+            })
+        }
+
+        const tweet = await tweetModel.findById(tweetId);
+        if (!tweet) {
+            return res.status(404).send({
+                success: false,
+                message: "Tweet Not Found"
+            })
+        }
+
+        const newComment = {
+            text,
+            userId,
+            created: new Date(),
+            userDetails: {
+                name: user.name,
+                username: user.username
+            }
+        }
+
+        tweet.comments.push(newComment);
+        await tweet.save();
+
+        return res.status(200).json({
+            message: "Comment Added Successfully",
+            success: true,
+            tweet
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: "Error while Adding comment"
+        })
+    }
+}
+
+
+
+export const getCommentsController = async (req, res) => {
+    try {
+        const { tweetId } = req.params;
+
+        const tweet = await tweetModel.findById(tweetId).populate('comments.userId', 'name')
+
+        if (!tweet) {
+            return res.status(404).send({
+                success: false,
+                message: "Tweet not found"
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Tweet found successfully",
+            tweet
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: "Error while Adding comment"
+        })
+    }
+}

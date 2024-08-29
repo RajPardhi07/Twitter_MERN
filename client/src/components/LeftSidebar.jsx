@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import { USER_API_END_POINT } from "../utils/constant";
 import { getMyProfile, getOtherUsers, getUser } from "../redux/userSlice";
 import toast from "react-hot-toast";
@@ -12,6 +12,7 @@ import { CgProfile } from "react-icons/cg";
 import { CiLogout } from "react-icons/ci";
 import { CiCircleMore } from "react-icons/ci";
 import { BsBookmark } from "react-icons/bs";
+import { useState } from "react";
 
 
 
@@ -22,6 +23,8 @@ const LeftSidebar = () => {
     const { user } = useSelector(store => store.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    // const [activeItem, setActiveItem] = useState(null);
 
     const logoutHandler = async () => {
         try {
@@ -35,6 +38,14 @@ const LeftSidebar = () => {
             console.log(error)
         }
     }
+
+
+
+    const activeClassName = "shadow-black/10 shadow-md text-yellow-400";
+    const baseClassName = "flex items-center mt-3 text-2xl gap-2 rounded-full hover:shadow-md shadow-slate/10 px-5 py-2";
+
+
+
     return (
         <div className="fixed top-0 left-0 w-[20%] font-semibold  ml-14 ">
 
@@ -45,47 +56,56 @@ const LeftSidebar = () => {
             <div className="pt-12 p-10">
 
 
-                <div className="hover:bg-slate-100 p-2 pl-6 rounded-full">
-                    <Link to='/' className="flex items-center text-2xl gap-2" >
+                <div>
+
+
+                    <NavLink to="/" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                         <MdHomeFilled />
                         <p>Home</p>
-                    </Link>
-
+                    </NavLink>
                 </div>
 
-                <div className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
+
+
+                <NavLink to="/explore" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                     <IoMdSearch />
                     <p>Explore</p>
-                </div>
-                
-                <div className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
+                </NavLink>
+
+                <NavLink to="/notifications" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                     <IoNotificationsOutline />
                     <p>Notification</p>
-                </div>
-                <div className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
+                </NavLink>
+                <NavLink to="/message" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
+                >
                     <BiMessage />
                     <p>Message</p>
-                </div>
-                <div className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
-                <BsBookmark />
+                </NavLink>
+                <NavLink to="/bookmarks" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
+                >
+                    <BsBookmark />
 
                     <p>Bookmarks</p>
-                </div>
+                </NavLink>
                 <div >
-                    <Link to={`/profile/${user._id}`} className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full" >
+                    <NavLink className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
+                        to={`/profile/${user?._id}`}
+                    >
                         <CgProfile />
                         <p>Profile</p>
-                    </Link>
+                    </NavLink>
 
                 </div>
-                <div onClick={logoutHandler} className="flex items-center cursor-pointer mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
+                <div onClick={logoutHandler}
+                    className="flex items-center cursor-pointer mt-3 text-2xl gap-2 rounded-full hover:shadow-md shadow-slate/10 px-5 py-2">
                     <CiLogout />
                     <p>Logout</p>
                 </div>
-                <div className="flex items-center mt-3 text-2xl gap-2 hover:bg-slate-100 p-2 pl-6 rounded-full">
+                <NavLink to="/more" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
+                >
                     <CiCircleMore />
                     <p>More</p>
-                </div>
+                </NavLink>
 
                 <button className="bg-blue-500 text-white mt-6 text-xl px-24 font-bold rounded-full py-3">Post</button>
 
