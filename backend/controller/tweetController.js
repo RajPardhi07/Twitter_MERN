@@ -297,3 +297,51 @@ export const getCommentsController = async (req, res) => {
         })
     }
 }
+
+
+
+export const deleteCommentsController = async (req, res) => {
+    try {
+        const { tweetId, commentId } = req.params;
+        const { userId } = req.body;
+
+        const tweet = await tweetModel.findById(tweetId);
+        if (!tweet) {
+            return res.status(404).send({
+                success: false,
+                message: "Tweet not found"
+            })
+        }
+
+        const comment = tweet.comments.id(commentId)
+        if (!comment) {
+            return res.status(404).send({
+                success: false,
+                message: "comment not found"
+            })
+        }
+
+        if (comment.userId.toString() !== userId) {
+            return res.status(403).send({
+                success: false,
+                message: "You are not authorized to delete this comment"
+            })
+        }
+
+        
+        tweet.comments.pull(commentId)
+        await tweet.save()
+
+        return res.status(200).json({
+            message: "Comment delete successfully",
+            success: true,
+            tweet
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "Internal Server error while delete comment"
+        })
+    }
+}

@@ -49,11 +49,13 @@ const LeftSidebar = () => {
     return (
         <div className="fixed top-0 left-0 w-[20%] font-semibold  ml-14 ">
 
-            <div className="text-5xl ml-24">
-                <i className="ri-twitter-x-line"></i>
+            <div className="text-5xl ">
+                {/* <i className="ri-twitter-x-line"></i> */}
+                            <img className='h-11 mt-2 ml-24 object-cover' src="https://logolook.net/wp-content/uploads/2021/06/Twitter-Log%D0%BE.png" alt="" />
+
             </div>
 
-            <div className="pt-12 p-10">
+            <div className="pt-8 p-10">
 
 
                 <div>

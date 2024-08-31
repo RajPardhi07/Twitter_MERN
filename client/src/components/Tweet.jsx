@@ -2,6 +2,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FaRegCommentAlt } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
+import { formatDistanceToNow } from 'date-fns';
+import { IoMdCloseCircle } from "react-icons/io";
 
 import { FaRegBookmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,18 +22,7 @@ const Tweet = ({ tweet }) => {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
 
-    // console.log("comments", comments)
-
-    // console.log("user", user)
-
-
-    const formateDate = () => {
-        const date = new Date(user?.createdAt);
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return date.toLocaleDateString('en-US', options);
-    }
-
-    const formattedDate = formateDate(user?.createdAt);
+    console.log("comments", comments.length)
 
 
     const dispatch = useDispatch();
@@ -78,49 +69,26 @@ const Tweet = ({ tweet }) => {
     }
 
 
+    useEffect(() => {
+        const fetchComments = async () => {
+            try {
+                if (commentOpen) {
+                    const res = await axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
+                    console.log("Allcommet", res.data.tweet.comments)
+                    setComments(res?.data?.tweet?.comments)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
-    // useEffect(() => {
-    //     const fetchComments = async () => {
-    //         try {
-    //             if (commentOpen) {
-    //                 const res = await axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
-    //                 console.log("Allcommet", res.data.tweet.comments)
-    //                 setComments(res?.data?.tweet?.comments)
-    //             }
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     };
-
-    //     // fetchComments();
-    // }, [commentOpen, tweet._id]);
-
-    // useEffect(() => {
-    //     const fetchComments = async () => {
-    //         try {
-    //             if (commentOpen) {
-    //                 const res = await axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
-    //                 console.log("Allcommet", res.data.tweet.comments)
-    //                 setComments(res?.data?.tweet?.comments)
-    //             }
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
-    //     };
-
-    //     if (commentOpen) {
-    //         fetchComments();
-    //     }
-    // }, [commentOpen, tweet._id]);
+        if (commentOpen) {
+            fetchComments();
+        }
+    }, [commentOpen, tweet._id]);
 
 
-    // useEffect(() => {
-    //     if (commentOpen) {
-    //         axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
-    //             .then(res => setComments(res?.data?.tweet?.comments))
-    //             .catch(err => console.log(err));
-    //     }
-    // }, [commentOpen, tweet._id])
+
 
     const addCommentHandler = async () => {
         try {
@@ -130,7 +98,7 @@ const Tweet = ({ tweet }) => {
                 text: newComment,
             })
             console.log("varun", res)
-            setComments([...comments, res.data.tweet.comments[res.data.tweet.comments.length - 1]]);
+            setComments([...comments, res?.data?.tweet?.comments[res?.data?.tweet?.comments?.length - 1]]);
             setNewComment("")
             toast.success("Comment your Post")
         } catch (error) {
@@ -140,15 +108,37 @@ const Tweet = ({ tweet }) => {
         }
     }
 
-    const OpenCommentSection = () => {
-        setCommentOpen(true)
+    const deleteCommentHandler = async (commentId) => {
+        try {
+            const res = await axios.delete(`http://localhost:8080/api/tweet/tweets/${tweet._id}/comments/${commentId}`, {
+                data: { userId: user._id },
+                withCredentials: true
+            })
+
+            setComments(comments.filter(comment => comment._id !== commentId));
+            toast.success(res.data.message);
+        } catch (error) {
+            console.log(error)
+        }
     }
+
+
+
+    const OpenCommentSection = () => {
+
+
+        return () => {
+            setCommentOpen(true)
+        }
+    };
 
     useEffect(() => {
         axios.get(`http://localhost:8080/getImage`,)
             .then(res => setImage(res.data[0].image))
             .catch(err => console.log(err))
     }, [])
+
+    // console.log(  "1 lakh", tweet.createdAt)
 
     return (
         <div className='border-b border-gray-200'>
@@ -175,7 +165,9 @@ const Tweet = ({ tweet }) => {
                                 <div className='flex items-center gap-2'>
                                     <h1 className='font-bold'>{tweet?.userDetails[0]?.name}</h1>
                                     <p>{tweet?.userDetails[0]?.username} </p>
-                                    <p>{formattedDate}</p>
+
+                                    <p className='text-sm text-slate-500'> {formatDistanceToNow(new Date(tweet?.createdAt), { addSuffix: true })}</p>
+
 
                                 </div>
                                 <div>
@@ -186,12 +178,12 @@ const Tweet = ({ tweet }) => {
 
 
                         <div className='flex justify-between my-3'>
-                            <div onClick={OpenCommentSection} className='flex cursor-pointer gap-2 items-center'>
+                            <div onClick={OpenCommentSection()} className='flex cursor-pointer gap-2 items-center'>
                                 <FaRegCommentAlt />
-                                <p>0</p>
+                                <p>{comments?.length}</p>
                             </div>
                             <div onClick={() => likeOrDislikeHandler(tweet?._id)} className='flex gap-2 items-center'>
-                                <FaRegHeart />
+                                <FaRegHeart className='hover:text-red-600'/>
                                 <p>{tweet?.like?.length}</p>
                             </div>
                             <div onClick={() => bookmarkPostHandler(tweet?._id)} className='flex gap-2 items-center'>
@@ -213,27 +205,46 @@ const Tweet = ({ tweet }) => {
                         </div>
 
                         {commentOpen && (
-                            <div className='w-full  bg-red-400'>
-                                <div>
-                                    <FiArrowLeft className="" size="30px" onClick={OpenCommentSection(false)} />
+                            <div className='w-full  rounded-md border'>
+                                <div className='flex items-center gap-5 border-b p-2'>
+                                    {/* <FiArrowLeft className="cursor-pointer p-1 hover:bg-slate-200 rounded-full" size="30px" onClick={() => setCommentOpen(false)} /> */}
+                                    <IoMdCloseCircle className="cursor-pointer p-1 hover:bg-slate-200 rounded-full" size="34px" onClick={() => setCommentOpen(false)}/>
+
+
+                                    <p className='text-xl'>Comment Section</p>
 
                                 </div>
-                                <div className='flex items-center justify-between mt-7'>
+                                <div className='flex items-center justify-between p-3 mt-7'>
                                     <input value={newComment}
                                         onChange={(e) => setNewComment(e.target.value)}
-                                        className='w-[34vw] outline-none text-xl h-[8vh]' type="text" placeholder='Post your reply' />
+                                        className='w-[34vw] outline-none bg-slate-100 pl-2 rounded-lg text-xl h-[8vh]' type="text" placeholder='Post your reply' />
                                     <button type='submit' onClick={addCommentHandler}
                                         className='bg-blue-400 py-2 px-10 text-xl rounded-full text-white '>Reply</button>
 
                                 </div>
 
-                                <div className='allcomment'>
+                                <div className='allcomment p-3 '>
                                     {comments && comments.map((item, index) => (
-                                        <div key={index}>
-                                            <div className='flex gap-2'>
+                                        <div key={index} className='border p-2 hover:bg-slate-50'>
+                                            <div className='flex gap-2 justify-between items-center'>
 
-                                                <h3>{item?.userDetails?.name}</h3>
-                                                <p>{item?.userDetails?.username}</p>
+                                                <div className='flex gap-2 items-center'>
+
+                                                    <h3 className='font-semibold text-[17px]'>{item?.userDetails?.name}</h3>
+                                                    <p>{item?.userDetails?.username}</p>
+                                                    <span className='text-gray-600 text-sm'>
+                                                        · {formatDistanceToNow(new Date(item.created), { addSuffix: true })}
+                                                    </span>
+                                                </div>
+
+
+                                                {user?._id === item?.userId?._id && (
+                                                    <AiOutlineDelete
+                                                        className='cursor-pointer text-xl hover:text-red-500'
+                                                        onClick={() => deleteCommentHandler(item._id)}
+                                                    />
+                                                )}
+
                                             </div>
                                             <h4>{item?.text}</h4>
 
