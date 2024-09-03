@@ -1,5 +1,5 @@
 import express from 'express'
-import { bookmarks, editController, followController, getMyBookmark, getMyProfile, getOtherUsers, getSingleUser, loginController, logoutController, registerController, unfollowController } from '../controller/userController.js';
+import { bookmarks, editController, followController,  getBookmark,  getMyProfile, getOtherUsers, getSingleUser, loginController, logoutController, profileImage, registerController, unfollowController, updateProfile } from '../controller/userController.js';
 import isAuthenticated from '../config/auth.js';
 
 const router = express.Router();
@@ -26,7 +26,7 @@ router.put('/bookmark/:id', isAuthenticated, bookmarks);
 
 
 // http://localhost:8080/api/user/getBookmark/:id
-router.get('/getBookmark/:id', getMyBookmark);
+router.get('/getBookmark/:id', getBookmark);
 
 // http://localhost:8080/api/user/getmyProfile/:id
 router.get('/getmyProfile/:id', isAuthenticated, getMyProfile);
@@ -41,6 +41,12 @@ router.post('/follow/:id', isAuthenticated, followController)
 
 // http://localhost:8080/api/user/unfollow/:id
 router.post('/unfollow/:id', isAuthenticated, unfollowController)
+
+
+router.post("/updateProfile/:id", updateProfile);
+
+router.get('/profile/:id', profileImage);
+
 
 
 export default router;

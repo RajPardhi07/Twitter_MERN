@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useState } from 'react';
-import Avatar from 'react-avatar';
 import toast from 'react-hot-toast';
 import { CiImageOn } from "react-icons/ci";
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,15 +10,15 @@ import { getIsActive, getRefresh } from '../redux/tweetSlice';
 
 const CreatePost = () => {
     const [description, setDescription] = useState("");
-    const { user } = useSelector(store => store.user);
-    console.log("create",user)
+    const { user , profile } = useSelector(store => store.user);
+    console.log("profile", profile?.profileImg)
     const { isActive } = useSelector(store => store.tweet)
     const dispatch = useDispatch();
 
     const submitHandler = async () => {
 
         try {
-            const res = await axios.post(`${TWEET_API_END_POINT}/createTweet`, { description, id:user?._id }, {
+            const res = await axios.post(`${TWEET_API_END_POINT}/createTweet`, { description, id: user?._id }, {
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -56,9 +55,9 @@ const CreatePost = () => {
                     </div>
                 </div>
                 <div className='border-b'>
-                    <div className='flex items-center gap-2 p-4'>
-                        <Avatar src="https://plus.unsplash.com/premium_photo-1724076827133-593437b8f16a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyfHx8ZW58MHx8fHx8"
-                            size="50" className='object-cover' round={true} />
+                    <div className='flex  items-center gap-2 p-4'>
+
+                        <img className='w-11 h-11 object-cover rounded-full' src={profile?.profileImg} alt="" />
 
                         <input value={description} onChange={(e) => setDescription(e.target.value)}
                             className='w-full outline-none border-none text-lg' type="text" placeholder='What is happening?!' />

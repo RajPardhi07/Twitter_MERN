@@ -5,14 +5,17 @@ import userRoute from "./routes/userRoute.js";
 import tweetRoute from "./routes/tweetRoute.js";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import multer from 'multer';
-import path from 'path';
-import imageModel from './model/imageModel.js';
+import { v2 as cloudinary } from "cloudinary";
+
 const app = express();
-
-
-
 dotenv.config();
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
 connectDB();
 
 app.use(express.urlencoded({
@@ -26,47 +29,6 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 app.use(express.static('public'))
-
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/Images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname))
-    }
-})
-
-const upload = multer({
-    storage: storage
-})
-
-// app.post('/upload/:id', upload.single('file'), (req, res) => {
-//     console.log(req.file)
-//     imageModel.create({ image: req.file.filename })
-//         .then(result => res.json(result))
-//         .catch(err => console.log(err))
-// })
-
-app.post('/upload/:id', upload.single('file'), async (req, res) => {
-    try {
-        const data = await imageModel.create({ image: req.file.filename })
-        res.status(200).json({
-            success: true,
-            message: "Upload Image Successfully",
-            data
-        })
-    } catch (error) {
-        console.log(error)
-    }
-})
-
-app.get('/getImage', (req, res) => {
-
-    imageModel.find()
-        .then(users => res.json(users))
-        .catch(err => res.json(err))
-})
 
 
 app.use('/api/user', userRoute)

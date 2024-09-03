@@ -12,7 +12,6 @@ import { CgProfile } from "react-icons/cg";
 import { CiLogout } from "react-icons/ci";
 import { CiCircleMore } from "react-icons/ci";
 import { BsBookmark } from "react-icons/bs";
-import { useState } from "react";
 
 
 
@@ -83,7 +82,7 @@ const LeftSidebar = () => {
                     <BiMessage />
                     <p>Message</p>
                 </NavLink>
-                <NavLink to="/bookmarks" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
+                <NavLink to={`/bookmarks/${user?._id}`} className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
                 >
                     <BsBookmark />
 

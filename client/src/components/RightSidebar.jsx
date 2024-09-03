@@ -13,7 +13,7 @@ const RightSidebar = () => {
   const [allusers, setAllusers] = useState();
   const [visibleUsers, setVisibleUsers] = useState(5);
 
-  // console.log("allusers",allusers)
+  // console.log("allusers",allusers[0]?.profileImg)
   // console.log(user._id)
 
 
@@ -66,7 +66,7 @@ const RightSidebar = () => {
           allusers?.slice(0, visibleUsers)?.map((user) => (
             <div key={user?._id} className="flex items-center p-1 mt-5 justify-between">
               <div className="flex items-center">
-                <img className="w-10 h-10 object-cover rounded-full" src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg" alt="" />
+                <img className="w-10 h-10 object-cover rounded-full" src={user?.profileImg} alt="" />
                 <div>
                   <h5 className="font-bold">{user?.name}</h5>
                   <p className="text-slate-500">{user?.username}</p>

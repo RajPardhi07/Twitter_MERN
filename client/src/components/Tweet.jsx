@@ -11,18 +11,18 @@ import { TWEET_API_END_POINT, USER_API_END_POINT } from '../utils/constant';
 import { getRefresh } from '../redux/tweetSlice';
 import { AiOutlineDelete } from "react-icons/ai";
 import { useEffect, useState } from 'react';
-import { FiArrowLeft } from 'react-icons/fi';
 
 const Tweet = ({ tweet }) => {
 
-    const { user } = useSelector(store => store.user);
+    const { user, profile } = useSelector(store => store.user);
     const [image, setImage] = useState();
 
+    console.log("profile", tweet)
     const [commentOpen, setCommentOpen] = useState(false);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
 
-    console.log("comments", comments.length)
+    // console.log("comments", comments.length)
 
 
     const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const Tweet = ({ tweet }) => {
             const res = await axios.put(`${TWEET_API_END_POINT}/likeOrDislike/${id}`, { id: user?._id }, {
                 withCredentials: true
             })
-            console.log(res);
+            // console.log(res);
             dispatch(getRefresh());
             toast.success(res.data.message);
         } catch (error) {
@@ -45,7 +45,7 @@ const Tweet = ({ tweet }) => {
             const res = await axios.put(`${USER_API_END_POINT}/bookmark/${id}`, { id: user?._id }, {
                 withCredentials: true
             })
-            console.log(res);
+            console.log("bookmarks", res);
             dispatch(getRefresh());
             alert("saved Post")
             toast.success(res.data.message);
@@ -59,7 +59,7 @@ const Tweet = ({ tweet }) => {
         try {
             axios.defaults.withCredentials = true;
             const res = await axios.delete(`${TWEET_API_END_POINT}/deleteTweet/${id}`);
-            console.log(res);
+            // console.log(res);
             dispatch(getRefresh());
             toast.success(res.data.message);
         } catch (error) {
@@ -72,19 +72,17 @@ const Tweet = ({ tweet }) => {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                if (commentOpen) {
-                    const res = await axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
-                    console.log("Allcommet", res.data.tweet.comments)
-                    setComments(res?.data?.tweet?.comments)
-                }
+                const res = await axios.get(`http://localhost:8080/api/tweet/tweets/${tweet?._id}/comments`)
+                // console.log("Allcommet", res.data.tweet.comments)
+                setComments(res?.data?.tweet?.comments)
+
             } catch (err) {
                 console.log(err);
             }
         };
 
-        if (commentOpen) {
-            fetchComments();
-        }
+        fetchComments();
+
     }, [commentOpen, tweet._id]);
 
 
@@ -97,7 +95,6 @@ const Tweet = ({ tweet }) => {
                 userId: user._id,
                 text: newComment,
             })
-            console.log("varun", res)
             setComments([...comments, res?.data?.tweet?.comments[res?.data?.tweet?.comments?.length - 1]]);
             setNewComment("")
             toast.success("Comment your Post")
@@ -143,23 +140,29 @@ const Tweet = ({ tweet }) => {
     return (
         <div className='border-b border-gray-200'>
             <div>
-                <div className='flex items-center gap-2 p-4'>
+                <div className='flex items-center gap-2 p-3'>
 
 
 
                     <div className='w-full'>
 
-                        <div className='flex gap-3'>
+                        <div className='flex gap-3 w-[45vw] '>
+
+                            <div className='w-[4vw] h-[7vh] '>
+
+                                { tweet?.userDetails && tweet?.userDetails?.map((data, index) => (
+
+                                <img key={index}
+                                    className="w-[3vw] h-[3vw] border cursor-pointer rounded-full object-top object-cover"
+                                    src={data?.profileImg}
+                                    alt=""
+
+                                />
+                                ))}
+                            </div>
 
 
-                            <img
-                                className="w-[3vw] h-[3vw] border cursor-pointer rounded-full object-top object-cover"
-                                src={`http://localhost:8080/Images/` + image}
-                                alt=""
-
-                            />
-
-                            <div>
+                            <div className=' w-[40vw]'>
 
 
                                 <div className='flex items-center gap-2'>
@@ -183,7 +186,7 @@ const Tweet = ({ tweet }) => {
                                 <p>{comments?.length}</p>
                             </div>
                             <div onClick={() => likeOrDislikeHandler(tweet?._id)} className='flex gap-2 items-center'>
-                                <FaRegHeart className='hover:text-red-600'/>
+                                <FaRegHeart className='hover:text-red-600' />
                                 <p>{tweet?.like?.length}</p>
                             </div>
                             <div onClick={() => bookmarkPostHandler(tweet?._id)} className='flex gap-2 items-center'>
@@ -208,7 +211,7 @@ const Tweet = ({ tweet }) => {
                             <div className='w-full  rounded-md border'>
                                 <div className='flex items-center gap-5 border-b p-2'>
                                     {/* <FiArrowLeft className="cursor-pointer p-1 hover:bg-slate-200 rounded-full" size="30px" onClick={() => setCommentOpen(false)} /> */}
-                                    <IoMdCloseCircle className="cursor-pointer p-1 hover:bg-slate-200 rounded-full" size="34px" onClick={() => setCommentOpen(false)}/>
+                                    <IoMdCloseCircle className="cursor-pointer p-1 hover:bg-slate-200 rounded-full" size="34px" onClick={() => setCommentOpen(false)} />
 
 
                                     <p className='text-xl'>Comment Section</p>

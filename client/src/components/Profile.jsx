@@ -10,7 +10,7 @@ import { followingUpdate } from "../redux/userSlice";
 import { getRefresh } from "../redux/tweetSlice";
 import { GoArrowLeft } from "react-icons/go";
 import { CiLocationOn } from "react-icons/ci";
-import { MdOutlineWorkOutline } from "react-icons/md";
+import { MdEdit, MdOutlineWorkOutline } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
@@ -20,41 +20,69 @@ import { AiOutlineDelete } from "react-icons/ai";
 const Profile = () => {
     const { user, profile } = useSelector(store => store.user)
     const [allMyTweet, setAllMyTweet] = useState();
-    const fileRef = useRef(null);
-    const navigate = useNavigate();
-    const [file, setFile] = useState();
     const [image, setImage] = useState();
+    const [coverImg, setCoverImg] = useState(null);
+    const [profileImg, setProfileImg] = useState(null);
+    const coverImgRef = useRef(null);
+    const profileImgRef = useRef(null);
+
+    let userId = user?._id
+    console.log(userId)
     const { id } = useParams();
+    const navigate = useNavigate();
     useGetProfile(id);
     const dispatch = useDispatch();
 
+    console.log("profile", profile?.coverImg)
 
-    // const handleUpload = () => {
+    console.log("profileImg", profileImg)
 
-    //     const formdata = new FormData()
-    //     formdata.append('file', file)
-    //     axios.post(`http://localhost:8080/upload/${user?._id}`, formdata)
-    //         .then(res => console.log(res))
-    //         .catch(err => console.log(err))
-    // }
+    const isMyProfile = user?._id === id;
+
+    // useEffect(() => {
+    //     const fetchProfile = async () => {
+    //         try {
+    //             const response = axios.get(`${USER_API_END_POINT}/profile/${id}`);
+    //             console.log("fetchProfile", response)
+    //             setCoverImg(response.data.coverImg);
+    //             setProfileImg(response.data.profileImg);
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    //     }
+
+    //     fetchProfile();
+    // }, [id])
 
 
-    const handleUpload = () => {
-        const formData = new FormData();
-        formData.append('file', file);
+    const handleImgChange = async (e, state) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const imageBase64 = reader.result;
+                if (state === "coverImg") {
+                    setCoverImg(imageBase64); // Update cover image state immediately
+                } else if (state === "profileImg") {
+                    setProfileImg(imageBase64); // Update profile image state immediately
+                }
 
-        axios.post(`http://localhost:8080/upload/${user?._id}`, formData)
-            .then((res) => {
-                console.log(res);
-                setImage(res.data.fileName); // Set the image to the newly uploaded image
-                toast.success("Profile picture updated successfully!");
-            })
-            .catch((err) => {
-                console.log(err);
-                toast.error("Failed to upload image");
-            });
+                try {
+                    const response = await axios.post(
+                        `${USER_API_END_POINT}/updateProfile/${user?._id}`,
+                        {
+                            [state]: imageBase64, // Send the updated image data
+                        }
+                    );
+                    toast.success("Image updated successfully!");
+                } catch (error) {
+                    toast.error("Failed to update image");
+                    console.log(error);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     };
-
 
     useEffect(() => {
         axios.get(`http://localhost:8080/getImage`,)
@@ -132,14 +160,40 @@ const Profile = () => {
                         <p className="font-extrabold">{profile?.name}</p>
                     </div>
 
-                    <div className="w-full border-b h-[70vh]">
-                        <div
-                            style={{
-                                backgroundImage:
-                                    "url(https://images.unsplash.com/photo-1722851448925-f6cf5cc8da77?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)",
-                            }}
-                            className="w-full h-[30vh] bg-cover bg-center bg-red-300"
-                        ></div>
+                    <div className="w-full relative border-b h-[70vh]">
+
+                        <img
+                            src={profile?.coverImg || "/tweetcover.jpg"}
+                            className="h-52 w-full object-cover object-center"
+                            alt="cover image"
+                        />
+
+                        <div onClick={() => coverImgRef.current.click()}
+                         className="absolute top-[4%] bg-slate-500  p-2 rounded-full left-[92%]">
+
+                            <MdEdit className="w-5  h-5 text-white" />
+                        </div>
+
+
+                        {/* {isMyProfile && (
+                            <div
+                                className=" absolute  right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer  group-hover/cover:opacity-100 transition duration-200"
+                                
+                            >
+                                <MdEdit className="w-5 bg-red-500 h-5 text-white" />
+                            </div>
+                        )} */}
+
+                        <input
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            ref={coverImgRef}
+                            onChange={(e) => handleImgChange(e, "coverImg")}
+                        />
+
+
+
 
                         <div className="flex px-5 justify-between">
                             <div>
@@ -151,19 +205,44 @@ const Profile = () => {
 
                                     <p className="text-xl">{profile?.work}</p>
 
-                                    
+
                                 </div>
-                                    <p className="text-slate-600 mt-1">{profile?.bio}</p>
+                                <p className="text-slate-600 mt-1">{profile?.bio}</p>
                             </div>
 
-                            <div className="-mt-16">
-                                <img className="w-[10vw] h-[10vw] border cursor-pointer rounded-full object-top object-cover"
-                                    src={`http://localhost:8080/Images/` + image} alt=""
-                                    onClick={() => fileRef.current.click()} />
-                                <input ref={fileRef} type="file" hidden onChange={e => setFile(e.target.files[0])} />
-                                <button className="border rounded-full px-3 py-1 ml-10 mt-1 hover:bg-slate-200" onClick={handleUpload}>Upload</button>
 
+
+                            <div className="w-32 -mt-20 rounded-full absolute left-[78%] group/avatar">
+                                <img
+                                    src={profile?.profileImg || "/avatar-placeholder.png"}
+                                    className="rounded-full w-32 h-32 object-cover object-top"
+                                    alt="profile"
+                                />
+                                <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                                    {isMyProfile && (
+                                        <MdEdit
+                                            className="w-4 h-4 text-white"
+                                            onClick={() => profileImgRef.current.click()}
+                                        />
+                                    )}
+                                </div>
                             </div>
+
+                            <input
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                ref={profileImgRef}
+                                onChange={(e) => handleImgChange(e, "profileImg")}
+                            />
+
+                            {/* <div className=' rounded-full -mt-28 relative group/avatar'>
+                                <img className="rounded-full w-40 h-40 object-cover" src={profile?.profileImg || user?.profileImg || "/avatar-placeholder.png"}
+                                    onClick={() => isMyProfile && profileImgRef.current.click()} />
+
+ </div> */}
+
+
 
 
                         </div>
@@ -221,7 +300,7 @@ const Profile = () => {
 
                                             <img
                                                 className="w-[3vw] h-[3vw] border cursor-pointer rounded-full object-top object-cover"
-                                                src={`http://localhost:8080/Images/` + image}
+                                                src={profile?.profileImg}
                                                 alt=""
 
                                             />

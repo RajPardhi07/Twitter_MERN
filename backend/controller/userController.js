@@ -2,10 +2,12 @@ import userModel from "../model/userModel.js";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import tweetModel from "../model/tweetModel.js";
+import { v2 as cloudinary } from "cloudinary";
+
 
 export const registerController = async (req, res) => {
     try {
-        const { name, email, password, username, location, work,bio } = req.body;
+        const { name, email, password, username, location, work, bio, coverImg, ProfileImg } = req.body;
 
         const user = await userModel.findOne({ email })
         if (user) {
@@ -24,7 +26,9 @@ export const registerController = async (req, res) => {
             password: hashedPassword,
             work,
             location,
-            bio
+            bio,
+            ProfileImg,
+            coverImg
         })
         res.status(201).json({
             success: true,
@@ -87,12 +91,12 @@ export const loginController = async (req, res) => {
 
 export const getSingleUser = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
 
         const user = await userModel.findById(id)
         res.status(200).json({
-            success:true,
-            message:"User get successfully",
+            success: true,
+            message: "User get successfully",
             user
         })
     } catch (error) {
@@ -135,25 +139,62 @@ export const logoutController = (req, res) => {
 }
 
 
+
+
+
 export const bookmarks = async (req, res) => {
     try {
         const loggedInUserId = req.body.id;
         const tweetId = req.params.id;
 
-        const tweet = await tweetModel.findById(tweetId);
-        const user = await userModel.findById(loggedInUserId);
-        if (user.bookmarks.includes(tweetId)) {
-            await userModel.findByIdAndUpdate(loggedInUserId, { $pull: { bookmarks: tweetId } });
-            return res.status(200).json({
-                message: "remove post"
-            })
-        } else {
-            await userModel.findByIdAndUpdate(loggedInUserId, { $push: { bookmarks: tweetId } });
-            return res.status(200).json({
-                message: "Saved post",
-                tweet
+        const tweet = await tweetModel.findById(tweetId)
+            .populate('userId', 'name username')
+            .populate('comments.userId', 'name username')
+        const user = await userModel.findById(loggedInUserId)
+
+        if (!user || !tweet) {
+            return res.status(404).json({
+                message: "User Tweet not found",
+                success: true
             })
         }
+        // Check if the tweet is already bookmarked
+        const bookmark = user.bookmarks.find(bm => bm.tweetId && bm.tweetId.toString() === tweetId)
+
+        if (bookmark) {
+            // Remove the bookmark if it already exists
+            await userModel.findByIdAndUpdate(loggedInUserId, {
+                $pull: { bookmarks: { tweetId } }
+            });
+            return res.status.json({
+                message: "Remove post"
+            })
+
+        }
+        else {
+            await userModel.findByIdAndUpdate(loggedInUserId, {
+                $push: {
+                    bookmarks: {
+                        tweetId,
+                        tweetDetails: {
+                            description: tweet.description,
+                            likes: tweet.like,
+                            comments: tweet.comments,
+                            userDetails: {
+                                name: tweet.userId.name,
+                                username: tweet.userId.username,
+                                userId: tweet.userId._id
+                            }
+                        }
+                    }
+                }
+            })
+            return res.status(200).json({
+                message: "Saved Post",
+                success: true
+            })
+        }
+
     } catch (error) {
         console.log(error)
         res.status(500).send({
@@ -164,33 +205,46 @@ export const bookmarks = async (req, res) => {
 }
 
 
-export const getMyBookmark = async (req, res) => {
+
+
+export const getBookmark = async (req, res) => {
     try {
-        const {id} = req.params;
-        const user = await userModel.findById(id).select('bookmarks')
-        if(!user){
+        const { id } = req.params;
+        const user = await userModel.findById(id).select('bookmarks');
+
+        if (!user) {
             return res.status(404).json({
-                success:false,
-                message:"User not found"
+                message: "User not found",
+                success: false
             })
         }
 
-        const bookmarks = user.bookmarks ;
+        const bookmarks = user.bookmarks.map(bookmark => ({
+            tweetId: bookmark.tweetId,
+            created: new Date(),
+            description: bookmark.tweetDetails.description,
+            likes: bookmark.tweetDetails.likes,
+            comments: bookmark.tweetDetails.comments,
+            userDetails: bookmark.tweetDetails.userDetails
+        }));
 
         res.status(200).json({
-            message:"Get All Tweets",
-            success:true,
-            bookmarks,
-            
+            message: "Fetched All bookmarks",
+            success: true,
+            bookmarks
         })
     } catch (error) {
         console.log(error)
         res.status(500).send({
             success: false,
-            message: "Error while Get Bookmark tweet"
+            message: "Error while Saved tweet"
         })
     }
 }
+
+
+
+
 
 
 export const getMyProfile = async (req, res) => {
@@ -231,32 +285,6 @@ export const getOtherUsers = async (req, res) => {
 }
 
 
-// export const followController = async (req, res) => {
-//     try {
-//        const loggedInUserId = req.body.id;
-//        const userId = req.params.id;
-//        const loggedInUser = await userModel.findById(loggedInUserId);
-//        const user = await userModel.findById(userId);
-//        if(!user.followers.includes(loggedInUserId)){
-//         await user.updateOne({$push:{followers:loggedInUserId}});
-//         await loggedInUser.updateOne({$push:{following:userId}});
-//        }else{
-//         return res.status(400).json({
-//             message:`User already followed to ${user.name}`
-//         })
-//        };
-//        return res.status(200).json({
-//         message:`${loggedInUser.name} just follow to ${user.name}`,
-//         success:true
-//        })
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).send({
-//             success: false,
-//             message: "Error while Follow users"
-//         })
-//     }
-// }
 
 
 export const followController = async (req, res) => {
@@ -312,5 +340,134 @@ export const unfollowController = async (req, res) => {
             success: false,
             message: "Error while get others users"
         })
+    }
+}
+
+
+//--------------------Profile Image Update----------------------------------------------
+
+// export const updateProfile = async (req, res) => {
+//     try {
+        
+//         let { profileImg, coverImg } = req.body;
+//         const userId = req.params.id;
+//         let user = await userModel.findById(userId)
+//         if (!user) return res.status(404).json({ message: "User not found" });
+
+//         if (profileImg) {
+//             if (user.profileImg) {
+//                 await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+//             }
+
+//             const uploadedResponse = await cloudinary.uploader.upload(profileImg);
+//             profileImg = uploadedResponse.secure_url;
+//         }
+
+//         if (coverImg) {
+//             if (user.coverImg) {
+//                 await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+//             }
+//         }
+
+//         const uploadedResponse = await cloudinary.uploader.upload(coverImg);
+
+//         coverImg = uploadedResponse.secure_url;
+
+//         user.profileImg = profileImg || user.profileImg;
+//         user.coverImg = coverImg || user.coverImg;
+
+//         user = await user.save();
+
+//         user.password = null;
+
+//         return res.status(200).json(user);
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).send({
+//             success: false,
+//             message: "Error while upload image users"
+//         })
+//     }
+// }
+
+
+
+export const updateProfile = async (req, res) => {
+    let { profileImg, coverImg } = req.body;
+    const  userId  = req.params.id;
+    try {
+        let user = await userModel.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // Handle profile image upload
+        if (profileImg) {
+            if (user.profileImg) {
+                await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+            }
+
+            // Check if the profileImg is a valid base64 string
+            if (profileImg.startsWith("data:image")) {
+                const uploadedResponse = await cloudinary.uploader.upload(profileImg);
+                profileImg = uploadedResponse.secure_url;
+            } else {
+                return res.status(400).json({ message: "Invalid profile image format" });
+            }
+        }
+
+        // Handle cover image upload
+        if (coverImg) {
+            if (user.coverImg) {
+                await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+            }
+
+            // Check if the coverImg is a valid base64 string
+            if (coverImg.startsWith("data:image")) {
+                const uploadedResponse = await cloudinary.uploader.upload(coverImg);
+                coverImg = uploadedResponse.secure_url;
+            } else {
+                return res.status(400).json({ message: "Invalid cover image format" });
+            }
+        }
+
+        user.profileImg = profileImg || user.profileImg;
+        user.coverImg = coverImg || user.coverImg;
+
+        user = await user.save();
+        user.password = null;
+
+        return res.status(200).json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error while uploading images"
+        });
+    }
+};
+
+
+
+export const profileImage = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const user = await userModel.findById(id).select("-password")
+        if(!user){
+            return res.status(404).send({
+                message:"Data not found",
+                success:false
+            })
+        }
+        return res.status(200).json({
+            
+            profileImg:user.profileImg,
+            coverImg:user.coverImg,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error while uploading images"
+        });
     }
 }

@@ -48,7 +48,7 @@ const AllusersPage = () => {
                     allusers?.map((user) => (
                         <div key={user?._id} className="flex w-[22vw] h-[20vh] hover:bg-slate-100 p-3 m-4 border-2 border-blue-400 rounded-md items-center  mt-3 justify-between">
                             <div className="">
-                                <img className="w-14 h-14 object-cover rounded-full" src="https://hips.hearstapps.com/hmg-prod/images/gettyimages-1229892983-square.jpg" alt="" />
+                                <img className="w-14 h-14 object-cover object-top rounded-full" src={user?.profileImg} alt="" />
                                 <div>
                                     <h5 className="font-bold text-2xl" >{user?.name}</h5>
                                     <p className="text-slate-500">{user?.username}</p>
