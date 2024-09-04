@@ -1,5 +1,6 @@
 import tweetModel from "../model/tweetModel.js";
 import userModel from "../model/userModel.js";
+import { v2 as cloudinary } from "cloudinary";
 
 
 
@@ -8,16 +9,22 @@ import userModel from "../model/userModel.js";
 
 export const createTweetController = async (req, res) => {
     try {
-        const { description, id } = req.body;
-        if (!description || !id) {
+        let { description, img, id } = req.body;
+        if ( !id ) {
             return res.status(404).json({
                 message: "Fields are required",
                 success: true
             })
         }
+
+        if(img) {
+            let uploadedResponse = await cloudinary.uploader.upload(img);
+            img = uploadedResponse.secure_url;
+        }
         const user = await userModel.findById(id).select("-password");
         const newTweet = await tweetModel.create({
             description,
+            img,
             userId: id,
             userDetails: user
         })

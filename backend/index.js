@@ -3,6 +3,7 @@ import connectDB from './config/db.js';
 import dotenv from 'dotenv';
 import userRoute from "./routes/userRoute.js";
 import tweetRoute from "./routes/tweetRoute.js";
+import notificationRoute from "./routes/notificationRoute.js";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { v2 as cloudinary } from "cloudinary";
@@ -33,6 +34,7 @@ app.use(express.static('public'))
 
 app.use('/api/user', userRoute)
 app.use('/api/tweet', tweetRoute)
+app.use('/api/notification', notificationRoute)
 
 
 

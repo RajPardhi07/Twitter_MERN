@@ -166,7 +166,7 @@ export const bookmarks = async (req, res) => {
             await userModel.findByIdAndUpdate(loggedInUserId, {
                 $pull: { bookmarks: { tweetId } }
             });
-            return res.status.json({
+            return res.status(404).json({
                 message: "Remove post"
             })
 
@@ -176,6 +176,7 @@ export const bookmarks = async (req, res) => {
                 $push: {
                     bookmarks: {
                         tweetId,
+                        profileImg:user.bookmarks.profileImage,
                         tweetDetails: {
                             description: tweet.description,
                             likes: tweet.like,
@@ -183,7 +184,8 @@ export const bookmarks = async (req, res) => {
                             userDetails: {
                                 name: tweet.userId.name,
                                 username: tweet.userId.username,
-                                userId: tweet.userId._id
+                                userId: tweet.userId._id,
+                               
                             }
                         }
                     }
@@ -224,7 +226,7 @@ export const getBookmark = async (req, res) => {
             created: new Date(),
             description: bookmark.tweetDetails.description,
             likes: bookmark.tweetDetails.likes,
-            comments: bookmark.tweetDetails.comments,
+            comments: bookmark.tweetDetails.comments, 
             userDetails: bookmark.tweetDetails.userDetails
         }));
 
@@ -454,7 +456,7 @@ export const profileImage = async (req, res) => {
         const user = await userModel.findById(id).select("-password")
         if(!user){
             return res.status(404).send({
-                message:"Data not found",
+                message:"User not found",
                 success:false
             })
         }

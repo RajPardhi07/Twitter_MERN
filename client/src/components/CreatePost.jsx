@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CiImageOn } from "react-icons/ci";
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +10,9 @@ import { getIsActive, getRefresh } from '../redux/tweetSlice';
 
 const CreatePost = () => {
     const [description, setDescription] = useState("");
-    const { user , profile } = useSelector(store => store.user);
+    const [img, setImg] = useState(null);
+    const imgRef = useRef(null);
+    const { user, profile } = useSelector(store => store.user);
     console.log("profile", profile?.profileImg)
     const { isActive } = useSelector(store => store.tweet)
     const dispatch = useDispatch();
@@ -18,22 +20,36 @@ const CreatePost = () => {
     const submitHandler = async () => {
 
         try {
-            const res = await axios.post(`${TWEET_API_END_POINT}/createTweet`, { description, id: user?._id }, {
+            const res = await axios.post(`${TWEET_API_END_POINT}/createTweet`, { description, id: user?._id, img }, {
                 headers: {
                     "Content-Type": "application/json"
                 },
                 withCredentials: true
             });
             dispatch(getRefresh());
-            if (res.data.success) {
-                toast.success(res.data.message);
+            if (res?.data?.success) {
+                toast.success(res?.data?.message);
             }
         } catch (error) {
-            toast.error(error.response.data.message);
+            toast.error(error?.response?.data?.message);
             console.log(error);
         }
         setDescription("");
+        setImg(null);
     }
+
+    const handleImgChange = (e) => {
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImg(reader.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
 
     const forYouHandler = () => {
         dispatch(getIsActive(true));
@@ -63,13 +79,29 @@ const CreatePost = () => {
                             className='w-full outline-none border-none text-lg' type="text" placeholder='What is happening?!' />
 
                     </div>
-                    <div className='flex items-center justify-between p-4'>
-                        <div>
-                            <CiImageOn />
+                    <div className='flex flex-col items-center justify-between p-4'>
+                       
 
+                        {
+                            img && (
+
+                                <img src={img} value={img} className='w-full mx-auto h-72 object-contain rounded' />
+                            )
+                        }
+
+
+                        <div className='flex w-full items-center justify-between'>
+                            <CiImageOn
+
+                                className='fill-primary w-6  text-blue-600 h-6 cursor-pointer'
+                                onClick={() => imgRef.current.click()}
+                            />
+
+                            <input type='file' accept='image/*' hidden ref={imgRef} onChange={handleImgChange} />
+
+                            <button onClick={submitHandler} type='submit' className='px-4 py-1 text-lg text-white bg-blue-500 border-none rounded-full'>Post</button>
                         </div>
 
-                        <button onClick={submitHandler} type='submit' className='px-4 py-1 text-lg text-white bg-blue-500 border-none rounded-full'>Post</button>
                     </div>
                 </div>
 

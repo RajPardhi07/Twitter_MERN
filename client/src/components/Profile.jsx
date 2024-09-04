@@ -33,9 +33,9 @@ const Profile = () => {
     useGetProfile(id);
     const dispatch = useDispatch();
 
-    console.log("profile", profile?.coverImg)
+    console.log("allMyTweet", allMyTweet)
 
-    console.log("profileImg", profileImg)
+    // console.log("profileImg", profileImg)
 
     const isMyProfile = user?._id === id;
 
@@ -84,11 +84,7 @@ const Profile = () => {
         }
     };
 
-    useEffect(() => {
-        axios.get(`http://localhost:8080/getImage`,)
-            .then(res => setImage(res.data[0].image))
-            .catch(err => console.log(err))
-    }, [])
+   
 
     const handleEdit = () => {
         navigate(`/edit/${id}`)
@@ -169,20 +165,13 @@ const Profile = () => {
                         />
 
                         <div onClick={() => coverImgRef.current.click()}
-                         className="absolute top-[4%] bg-slate-500  p-2 rounded-full left-[92%]">
+                            className="absolute top-[4%] bg-slate-500  p-2 rounded-full left-[92%]">
 
                             <MdEdit className="w-5  h-5 text-white" />
                         </div>
 
 
-                        {/* {isMyProfile && (
-                            <div
-                                className=" absolute  right-2 rounded-full p-2 bg-gray-800 bg-opacity-75 cursor-pointer  group-hover/cover:opacity-100 transition duration-200"
-                                
-                            >
-                                <MdEdit className="w-5 bg-red-500 h-5 text-white" />
-                            </div>
-                        )} */}
+                       
 
                         <input
                             type="file"
@@ -236,11 +225,7 @@ const Profile = () => {
                                 onChange={(e) => handleImgChange(e, "profileImg")}
                             />
 
-                            {/* <div className=' rounded-full -mt-28 relative group/avatar'>
-                                <img className="rounded-full w-40 h-40 object-cover" src={profile?.profileImg || user?.profileImg || "/avatar-placeholder.png"}
-                                    onClick={() => isMyProfile && profileImgRef.current.click()} />
-
- </div> */}
+   
 
 
 
@@ -277,18 +262,18 @@ const Profile = () => {
                     </div>
 
                     <form className="mt-3">
-                        <h4 className="text-xl uppercase">All My Post</h4>
+                        <h4 className="text-3xl text-center font-bold uppercase">All My Post</h4>
 
 
 
                     </form>
 
                     <div className="mt-5 border-t">
-                        <h4 className="text-2xl font-bold mb-4">Your Tweets</h4>
+                        {/* <h4 className="text-2xl  mb-4">Your Tweets</h4> */}
 
 
                         <div>
-                            {allMyTweet?.map((tweet, index) => {
+                            {isMyProfile && allMyTweet?.map((tweet, index) => {
 
                                 const date = new Date(tweet?.createdAt);
                                 const options = { year: 'numeric', month: 'short', day: '2-digit' };
@@ -311,6 +296,10 @@ const Profile = () => {
                                         <div className="p-3">
 
                                             <p>{tweet?.description}</p>
+                                            <div className='w-full mt-3 bg-red-300'>
+                                                <img className='w-full h-full object-cover' src={tweet?.img} alt="" />
+
+                                            </div>
                                         </div>
                                         <div className="flex items-center px-2 m-2 justify-between">
 

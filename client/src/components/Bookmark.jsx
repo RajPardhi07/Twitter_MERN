@@ -1,4 +1,4 @@
-import {  FaRegCommentAlt, FaRegHeart } from "react-icons/fa"
+import { FaRegCommentAlt, FaRegHeart } from "react-icons/fa"
 import LeftSidebar from "./LeftSidebar"
 import RightSidebar from "./RightSidebar"
 import { useEffect, useState } from "react"
@@ -8,6 +8,8 @@ import { IoMdBookmark } from "react-icons/io";
 import { formatDistanceToNow } from 'date-fns';
 
 const Bookmark = () => {
+
+
 
   const { id } = useParams();
 
@@ -44,7 +46,7 @@ const Bookmark = () => {
 
 
 
-          {allSaveTweet &&  allSaveTweet.map((item, index) => (
+          {allSaveTweet && allSaveTweet.map((item, index) => (
             <div key={index} className=' border-b border-gray-200'>
               <div>
                 <div className='flex items-center gap-2 p-4'>
@@ -53,15 +55,21 @@ const Bookmark = () => {
 
                   <div className='w-full'>
 
-                    <div className='flex gap-3'>
+                    <div className='flex gap-3 w-[45vw]'>
 
 
-                      <img
-                        className="w-[3vw] h-[3vw] border cursor-pointer rounded-full object-top object-cover"
-                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fG1vZGVsJTIwbWVufGVufDB8fDB8fHww"
-                        alt=""
+                      <div className='w-[4vw] h-[7vh] '>
 
-                      />
+                        {/* {tweet?.userDetails && tweet?.userDetails?.map((data, index) => (
+
+                          <img key={index}
+                            className="w-[3vw] h-[3vw] border cursor-pointer rounded-full object-top object-cover"
+                            src={data?.profileImg}
+                            alt=""
+
+                          />
+                        ))} */}
+                      </div>
 
                       <div>
 
@@ -107,9 +115,9 @@ const Bookmark = () => {
 
 
                 </div>
-              </div> 
+              </div>
             </div>
-          )) }
+          ))}
 
         </div>
       </div>

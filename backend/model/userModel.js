@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
     },
     bio: {
         type: String,
-        default: "..."
+        default: "......."
     },
     bookmarks: [{
         tweetId: {
@@ -78,9 +78,12 @@ const userSchema = new mongoose.Schema({
             userDetails: {
                 name: String,
                 username: String,
+
                 userId: {
-                    type: mongoose.Schema.Types.ObjectId, ref: "User"
-                }
+                  type: mongoose.Schema.Types.ObjectId, ref: "User"
+                },
+
+
             }
         }
     }]

@@ -17,7 +17,7 @@ const Tweet = ({ tweet }) => {
     const { user, profile } = useSelector(store => store.user);
     const [image, setImage] = useState();
 
-    console.log("profile", tweet)
+    console.log("profile", tweet?.img)
     const [commentOpen, setCommentOpen] = useState(false);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
@@ -129,13 +129,7 @@ const Tweet = ({ tweet }) => {
         }
     };
 
-    useEffect(() => {
-        axios.get(`http://localhost:8080/getImage`,)
-            .then(res => setImage(res.data[0].image))
-            .catch(err => console.log(err))
-    }, [])
 
-    // console.log(  "1 lakh", tweet.createdAt)
 
     return (
         <div className='border-b border-gray-200'>
@@ -175,6 +169,11 @@ const Tweet = ({ tweet }) => {
                                 </div>
                                 <div>
                                     <p>{tweet?.description}</p>
+
+                                    <div className='w-full mt-3 bg-red-300'>
+                                        <img className='w-full h-full object-cover' src={tweet?.img} alt="" />
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
