@@ -85,6 +85,10 @@ const Bookmark = () => {
                         <div>
                           <p>{item?.description}</p>
                         </div>
+                        <div className='w-full mt-3 bg-red-300'>
+                          <img className='w-full h-full object-cover' src={item?.img} alt="" />
+
+                        </div>
                       </div>
                     </div>
 

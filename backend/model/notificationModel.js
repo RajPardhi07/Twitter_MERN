@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 
-const notificationSchema = new mongoose.model({
+const notificationSchema = new mongoose.Schema({
     from:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
@@ -20,8 +20,8 @@ const notificationSchema = new mongoose.model({
         default:false,
     },
 },
-{
-   timestamps:true 
-})
+
+    { timestamps: true }
+)
 
 export default mongoose.model("Notification", notificationSchema)

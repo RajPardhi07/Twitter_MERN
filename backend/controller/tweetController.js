@@ -1,3 +1,4 @@
+import notificationModel from "../model/notificationModel.js";
 import tweetModel from "../model/tweetModel.js";
 import userModel from "../model/userModel.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -10,14 +11,14 @@ import { v2 as cloudinary } from "cloudinary";
 export const createTweetController = async (req, res) => {
     try {
         let { description, img, id } = req.body;
-        if ( !id ) {
+        if (!id) {
             return res.status(404).json({
                 message: "Fields are required",
                 success: true
             })
         }
 
-        if(img) {
+        if (img) {
             let uploadedResponse = await cloudinary.uploader.upload(img);
             img = uploadedResponse.secure_url;
         }
@@ -76,6 +77,14 @@ export const likeOrDislike = async (req, res) => {
         } else {
             //like
             await tweetModel.findByIdAndUpdate(tweetId, { $push: { like: loggedInUserId } })
+
+            const notification = new notificationModel({
+                from: loggedInUserId,
+                to: tweet.userId,
+                type: "like",
+            })
+
+            await notification.save();
             return res.status(200).json({
                 message: "User liked your tweet"
             })
@@ -335,7 +344,7 @@ export const deleteCommentsController = async (req, res) => {
             })
         }
 
-        
+
         tweet.comments.pull(commentId)
         await tweet.save()
 

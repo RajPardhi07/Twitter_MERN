@@ -73,7 +73,7 @@ const LeftSidebar = () => {
                     <p>Explore</p>
                 </NavLink>
 
-                <NavLink to="/notifications" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
+                <NavLink to="/notification" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                     <IoNotificationsOutline />
                     <p>Notification</p>
                 </NavLink>

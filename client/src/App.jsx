@@ -6,6 +6,7 @@ import Register from "./components/Register"
 import Edit from "./components/Edit"
 import AllusersPage from "./components/AllusersPage"
 import Bookmark from "./components/Bookmark"
+import NotificationPage from "./components/NotificationPage"
 // import LeftSidebar from "./components/LeftSidebar"
 // import RightSidebar from "./components/RightSidebar"
 
@@ -24,7 +25,7 @@ const App = () => {
         <Route path="/edit/:id" element={<Edit />} />
         <Route path="/allusers" element={<AllusersPage />} />
         <Route path="/bookmarks/:id" element={<Bookmark />} />
-
+        <Route path="/notification" element={<NotificationPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
