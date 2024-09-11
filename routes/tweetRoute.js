@@ -38,4 +38,4 @@ router.get('/followingtweets/:id', isAuthenticated, getFollowingTweets);
 
 router.get('/mytweet/:id', UserTweetController);
 
-export default router;
+export default router;  

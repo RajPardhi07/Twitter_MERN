@@ -46,15 +46,15 @@ const LeftSidebar = () => {
 
 
     return (
-        <div className="fixed top-0 left-0 w-[20%] font-semibold  ml-14 ">
+        <div className="fixed lg:top-0 lg:left-0 bottom-0 -left-14 lg:w-[20%] w-[100%] font-semibold  ml-14 ">
 
             <div className="text-5xl ">
                 {/* <i className="ri-twitter-x-line"></i> */}
-                            <img className='h-11 mt-2 ml-24 object-cover' src="https://logolook.net/wp-content/uploads/2021/06/Twitter-Log%D0%BE.png" alt="" />
+                            <img className='hidden lg:block  h-11 mt-2 ml-24 object-cover' src="https://logolook.net/wp-content/uploads/2021/06/Twitter-Log%D0%BE.png" alt="" />
 
             </div>
 
-            <div className="pt-8 p-10">
+            <div className="pt-8 lg:p-10 p-3 flex lg:flex-col">
 
 
                 <div>
@@ -62,7 +62,7 @@ const LeftSidebar = () => {
 
                     <NavLink to="/" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                         <MdHomeFilled />
-                        <p>Home</p>
+                        <p className="hidden lg:block">Home</p>
                     </NavLink>
                 </div>
 
@@ -70,45 +70,45 @@ const LeftSidebar = () => {
 
                 <NavLink to="/explore" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                     <IoMdSearch />
-                    <p>Explore</p>
+                    <p className="hidden lg:block">Explore</p>
                 </NavLink>
 
                 <NavLink to="/notification" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}>
                     <IoNotificationsOutline />
-                    <p>Notification</p>
+                    <p className="hidden lg:block">Notification</p>
                 </NavLink>
                 <NavLink to="/message" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
                 >
                     <BiMessage />
-                    <p>Message</p>
+                    <p className="hidden lg:block">Message</p>
                 </NavLink>
                 <NavLink to={`/bookmarks/${user?._id}`} className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
                 >
                     <BsBookmark />
 
-                    <p>Bookmarks</p>
+                    <p className="hidden lg:block">Bookmarks</p>
                 </NavLink>
                 <div >
                     <NavLink className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
                         to={`/profile/${user?._id}`}
                     >
                         <CgProfile />
-                        <p>Profile</p>
+                        <p className="hidden lg:block">Profile</p>
                     </NavLink>
 
                 </div>
                 <div onClick={logoutHandler}
                     className="flex items-center cursor-pointer mt-3 text-2xl gap-2 rounded-full hover:shadow-md shadow-slate/10 px-5 py-2">
                     <CiLogout />
-                    <p>Logout</p>
+                    <p className="hidden lg:block">Logout</p>
                 </div>
                 <NavLink to="/more" className={({ isActive }) => `${baseClassName} ${isActive ? activeClassName : ""}`}
                 >
                     <CiCircleMore />
-                    <p>More</p>
+                    <p className="hidden lg:block">More</p>
                 </NavLink>
 
-                <button className="bg-blue-500 text-white mt-6 text-xl px-24 font-bold rounded-full py-3">Post</button>
+                <button className="bg-blue-500 hidden lg:block text-white mt-6 text-xl px-24 font-bold rounded-full py-3">Post</button>
 
             </div>
 

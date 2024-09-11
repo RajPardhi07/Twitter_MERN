@@ -44,7 +44,7 @@ const RightSidebar = () => {
 
 
 
-    <div className="fixed top-0 w-full left-[74%] p-5  bg-white">
+    <div className="fixed top-0 hidden lg:block w-full left-[74%] p-5  bg-white">
       <div className="w-full h-[9vh]">
         {/* <input className="w-[18vw] h-[6vh] bg-slate-100 rounded-full pl-3" type="text" placeholder="Search" /> */}
 

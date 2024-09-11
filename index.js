@@ -7,6 +7,13 @@ import notificationRoute from "./routes/notificationRoute.js";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { v2 as cloudinary } from "cloudinary";
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 dotenv.config();
@@ -36,6 +43,11 @@ app.use('/api/user', userRoute)
 app.use('/api/tweet', tweetRoute)
 app.use('/api/notification', notificationRoute)
 
+app.use(express.static(path.join(__dirname, "./client/dist")));
+
+app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "./client/dist/index.html"))
+})
 
 
 const PORT = process.env.PORT || 8080
